@@ -246,7 +246,7 @@ handle_add (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-	else if (reg1 == REG_ADDR)
+	if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -280,7 +280,7 @@ handle_and (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-	else if (reg1 == REG_ADDR)
+	if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -315,7 +315,7 @@ handle_or (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-	else if (reg1 == REG_ADDR)
+	if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -348,7 +348,7 @@ handle_xor (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-	else if (reg1 == REG_ADDR)
+	if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -384,7 +384,7 @@ handle_sub (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-	else if (reg1 == REG_ADDR)
+	if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -420,7 +420,7 @@ handle_test (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-	else if (reg1 == REG_ADDR)
+	if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -456,7 +456,7 @@ handle_shl (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-	else if (reg1 == REG_ADDR)
+	if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -492,7 +492,7 @@ handle_shr (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-	else if (reg1 == REG_ADDR)
+	if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
