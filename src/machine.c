@@ -389,7 +389,7 @@ handle_sub (struct machine *m, uint8_t *b)
 	uint16_t off = 1;
 
 	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
-	if (off == REG_ADDR)
+	if (reg0 == REG_ADDR)
 		off++;
 
 	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
