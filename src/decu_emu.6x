@@ -1,0 +1,155 @@
+.TH decu_emu 6x "1.00 (4-Jan-2024)" "Console version" "Game manual"
+.SH NAME
+decu_emu \- Simulation of a fictional computer, where you need to program logic using machine codes.
+.SH SYNOPSIS
+.B decu_emu
+[\-\[dump_file]]
+.SH DESCRIPTION
+Write opcodes and run simulation.
+.SH OPTIONS
+.I decu_emu
+accepts the following options:
+.TP 8
+.B [dump_file]
+Specify the file to upload to the game.
+.SH INSTRUCTIONS
+.PP
+.B 
+ADD
+0000 - addition
+.PP
+.B
+SUB
+0001 - substration
+.PP
+.B
+AND
+0010 - compare and bits 
+.PP
+.B
+OR
+0011 - compare or bits
+.PP
+.B
+XOR
+0100 - xor bytes
+.PP
+.B
+SHL
+0101 - shift left bits
+.PP
+.B
+SHR
+0110 - shift right bits
+.PP
+.B
+LD
+0111 - load to register or memory
+.PP
+.B
+IN
+1000 - input data from address
+.PP
+.B
+NOP
+1001 - nothing instruction
+.PP
+.B
+OUT
+1010 - send byte to address
+.PP
+.B
+PUSH
+1011 - push into stack
+.PP
+.B
+POP
+1100 - pop from stack
+.PP
+.B
+TEST
+1101 - substract without assignment
+.PP
+.B
+JC
+1110 - jmp jc instructions
+.PP
+.B
+HALT
+1111 - stop execution program
+.PP
+.B
+.PP
+.SH REGISTERS
+.PP
+.B
+A
+00 - accumulator
+.PP
+.B
+X
+01 - register X
+.PP
+.B
+Y
+10 - register Y
+.PP
+.B
+[ADDR]
+11 - register of address
+
+.SH JMP CONDITIONS
+.PP
+.B
+JC
+00 - jmp if carry flag
+.PP
+.B
+JS
+01 - jmp if sign flag
+.PP
+.B
+JZ
+10 - jmp if zero flag
+.PP
+.B
+JMP
+11 - jmp absolute
+.PP
+.TP 8
+Jump require 2 byte offset.
+
+.SH PORTS
+.PP
+.B
+0x00
+[in, out] - The timer, you can set the screen refresh time in milliseconds, requires two bytes.
+.PP
+.B
+0x01
+[in, out] - the screen is 20x10. In the X register, the x coordinate, in the Y register, the y coordinate, in the A register, the symbol that you want to see on.
+.PP
+.B
+0x02
+[out] - reading into register A the value of the move keys. 1000 left, 0100 down, 0010 up, 0001 right. 1100 left and up.
+.PP
+.B
+0x03
+[out] - reading into register A by pressing the key. The venerable keys are 'W' 'E' 'S' 'D'.
+.SH ABOUT GAME
+.PP
+.TP 8
+The game is about editing bytes in a hex editor. You have a stack, but it can only be controlled using PUSH and POP instructions. You can load bytes using the LD instruction not only into the register, but also directly into memory. For this, you can store local variables in the first 256 bytes of the memory dump. A total of 65536 bytes are available for the game.
+
+.SH COPYRIGHT
+.PP
+.TP 8
+Copyright \(co 2025 Dmitry Naydolinsky
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation. 
+.SH AUTHOR
+Dmitry Naydolinsky <switchnight@mail.ru>.
