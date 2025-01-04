@@ -606,7 +606,10 @@ handle_jc (struct machine *m, uint8_t *b)
 		return;
 	}
 
-	m->cpu.ip++;
+	if (reg0 == REG_ADDR)
+		m->cpu.ip += 2;
+	else 
+		m->cpu.ip++;
 }
 
 void
