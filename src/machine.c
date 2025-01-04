@@ -241,8 +241,6 @@ handle_add (struct machine *m, uint8_t *b)
 		b[*r0] += *r1;
 	else if (reg0 == REG_ADDR)
 		b[*r0] += *r1;
-	else if (reg1 == REG_ADDR)
-		*r0 += b[*r1];
 	else
 		*r0 += *r1;
 
@@ -282,8 +280,6 @@ handle_and (struct machine *m, uint8_t *b)
 		b[*r0] &= *r1;
 	else if (reg0 == REG_ADDR)
 		b[*r0] &= *r1;
-	else if (reg1 == REG_ADDR)
-		*r0 &= b[*r1];
 	else
 		*r0 &= *r1;
 
@@ -320,8 +316,6 @@ handle_or (struct machine *m, uint8_t *b)
 		b[*r0] |= *r1;
 	else if (reg0 == REG_ADDR)
 		b[*r0] |= *r1;
-	else if (reg1 == REG_ADDR)
-		*r0 |= b[*r1];
 	else
 		*r0 |= *r1;
 
@@ -360,8 +354,6 @@ handle_xor (struct machine *m, uint8_t *b)
 		b[*r0] ^= *r1;
 	else if (reg0 == REG_ADDR)
 		b[*r0] ^= *r1;
-	else if (reg1 == REG_ADDR)
-		*r0 ^= b[*r1];
 	else
 		*r0 ^= *r1;
 
@@ -400,8 +392,6 @@ handle_sub (struct machine *m, uint8_t *b)
 		b[*r0] -= *r1;
 	else if (reg0 == REG_ADDR)
 		b[*r0] -= *r1;
-	else if (reg1 == REG_ADDR)
-		*r0 -= b[*r1];
 	else
 		*r0 -= *r1;
 
@@ -442,8 +432,6 @@ handle_test (struct machine *m, uint8_t *b)
 		r = b[*r0] - *r1;
 	else if (reg0 == REG_ADDR)
 		r = b[*r0] - *r1;
-	else if (reg1 == REG_ADDR)
-		r = *r0 - b[*r1];
 	else
 		r = *r0 - *r1;
 
