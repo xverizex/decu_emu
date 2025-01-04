@@ -246,8 +246,7 @@ handle_add (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-
-	if (reg1 == REG_ADDR)
+	else if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -281,8 +280,7 @@ handle_and (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-
-	if (reg1 == REG_ADDR)
+	else if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -317,8 +315,7 @@ handle_or (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-
-	if (reg1 == REG_ADDR)
+	else if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -351,8 +348,7 @@ handle_xor (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-
-	if (reg1 == REG_ADDR)
+	else if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -388,8 +384,7 @@ handle_sub (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-
-	if (reg1 == REG_ADDR)
+	else if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -403,9 +398,21 @@ handle_test (struct machine *m, uint8_t *b)
 
 	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
 	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
-	uint8_t r = *r0 - *r1;
 
-	if (r > *r0) m->cpu.flags |= CPU_FLAG_C;
+	uint8_t old_r0 = *r0;
+	uint8_t r = 0;
+
+	if (reg0 == REG_ADDR && reg1 == REG_ADDR)
+		r = b[*r0] - *r1;
+	else if (reg0 == REG_ADDR)
+		r = b[*r0] - *r1;
+	else if (reg1 == REG_ADDR)
+		r = *r0 - b[*r1];
+	else
+		r = *r0 - *r1;
+
+
+	if (r > old_r0) m->cpu.flags |= CPU_FLAG_C;
 	if (r == 0) m->cpu.flags |= CPU_FLAG_Z;
 	if ((int8_t) r < 0) m->cpu.flags |= CPU_FLAG_S;
 
@@ -413,8 +420,7 @@ handle_test (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-
-	if (reg1 == REG_ADDR)
+	else if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -450,8 +456,7 @@ handle_shl (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-
-	if (reg1 == REG_ADDR)
+	else if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
@@ -487,8 +492,7 @@ handle_shr (struct machine *m, uint8_t *b)
 
 	if (reg0 == REG_ADDR)
 		m->cpu.ip++;
-
-	if (reg1 == REG_ADDR)
+	else if (reg1 == REG_ADDR)
 		m->cpu.ip++;
 }
 
