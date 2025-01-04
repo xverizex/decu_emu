@@ -191,15 +191,18 @@ handle_ld (struct machine *m, uint8_t *b)
 	uint8_t value = 0;
 	uint8_t is_addr = 0;
 	if (reg0 == REG_ADDR || reg1 == REG_ADDR) {
-		value = b[m->cpu.ip + 1];
 		is_addr = 1;
 	}
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (reg0 == REG_ADDR)
+		off++;
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 
 	if (reg0 == REG_ADDR && reg1 == REG_ADDR)
-		b[*r0] = b[*r1];
+		b[*r0] = *r1;
 	else if (reg0 == REG_ADDR)
 		b[*r0] = *r1;
 	else if (reg1 == REG_ADDR)
@@ -207,10 +210,13 @@ handle_ld (struct machine *m, uint8_t *b)
 	else
 		*r0 = *r1;
 
-	if (is_addr)
-		m->cpu.ip += 2;
-	else
-		m->cpu.ip += 1;
+	m->cpu.ip++;
+
+	if (reg0 == REG_ADDR)
+		m->cpu.ip++;
+	if (reg1 == REG_ADDR)
+		m->cpu.ip++;
+
 }
 
 static void
@@ -221,8 +227,13 @@ handle_add (struct machine *m, uint8_t *b)
 	uint8_t reg0 = (b[m->cpu.ip] >> 2) & 0x3;
 	uint8_t reg1 = (b[m->cpu.ip] >> 0) & 0x3;
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (reg0 == REG_ADDR)
+		off++;
+
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 
 	uint8_t old_r0 = *r0;
 
@@ -258,8 +269,13 @@ handle_and (struct machine *m, uint8_t *b)
 	uint8_t reg0 = (b[m->cpu.ip] >> 2) & 0x3;
 	uint8_t reg1 = (b[m->cpu.ip] >> 0) & 0x3;
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (reg0 == REG_ADDR)
+		off++;
+
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 	uint8_t r = *r0 & *r1;
 
 	if (reg0 == REG_ADDR && reg1 == REG_ADDR)
@@ -292,8 +308,13 @@ handle_or (struct machine *m, uint8_t *b)
 	uint8_t reg0 = (b[m->cpu.ip] >> 2) & 0x3;
 	uint8_t reg1 = (b[m->cpu.ip] >> 0) & 0x3;
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (reg0 == REG_ADDR)
+		off++;
+
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 
 	if (reg0 == REG_ADDR && reg1 == REG_ADDR)
 		b[*r0] |= *r1;
@@ -327,8 +348,13 @@ handle_xor (struct machine *m, uint8_t *b)
 	uint8_t reg0 = (b[m->cpu.ip] >> 2) & 0x3;
 	uint8_t reg1 = (b[m->cpu.ip] >> 0) & 0x3;
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (reg0 == REG_ADDR)
+		off++;
+
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 
 	if (reg0 == REG_ADDR && reg1 == REG_ADDR)
 		b[*r0] ^= *r1;
@@ -360,8 +386,13 @@ handle_sub (struct machine *m, uint8_t *b)
 	uint8_t reg0 = (b[m->cpu.ip] >> 2) & 0x3;
 	uint8_t reg1 = (b[m->cpu.ip] >> 0) & 0x3;
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (off == REG_ADDR)
+		off++;
+
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 
 	uint8_t old_r0 = *r0;
 
@@ -396,8 +427,13 @@ handle_test (struct machine *m, uint8_t *b)
 	uint8_t reg0 = (b[m->cpu.ip] >> 2) & 0x3;
 	uint8_t reg1 = (b[m->cpu.ip] >> 0) & 0x3;
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (reg0 == REG_ADDR)
+		off++;
+
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 
 	uint8_t old_r0 = *r0;
 	uint8_t r = 0;
@@ -432,8 +468,13 @@ handle_shl (struct machine *m, uint8_t *b)
 	uint8_t reg0 = (b[m->cpu.ip] >> 2) & 0x3;
 	uint8_t reg1 = (b[m->cpu.ip] >> 0) & 0x3;
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (reg0 == REG_ADDR)
+		off++;
+
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 	uint8_t r = *r0 << *r1;
 
 	uint8_t bit = 0x80;
@@ -468,8 +509,13 @@ handle_shr (struct machine *m, uint8_t *b)
 	uint8_t reg0 = (b[m->cpu.ip] >> 2) & 0x3;
 	uint8_t reg1 = (b[m->cpu.ip] >> 0) & 0x3;
 
-	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + 1]);
-	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + 1]);
+	uint16_t off = 1;
+
+	uint8_t *r0 = get_register (m, reg0, &b[m->cpu.ip + off]);
+	if (reg0 == REG_ADDR)
+		off++;
+
+	uint8_t *r1 = get_register (m, reg1, &b[m->cpu.ip + off]);
 	uint8_t r = *r0 << *r1;
 
 	uint8_t bit = 0x01;
