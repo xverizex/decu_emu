@@ -17,8 +17,8 @@ hex_editor_movement (struct hex_editor *h, int c)
 			break;
 		case 'j':
 			h->cursory++;
-			if (h->cursory >= (h->height - 1)) {
-				h->cursory = h->height - 2;
+			if (h->cursory >= (h->height - h->uoff)) {
+				h->cursory = h->height - h->uoff - 1;
 				if ((h->top_line + h->height) < 0xffff) {
 					h->top_line++;
 				}
@@ -159,6 +159,7 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 static void
 print_info (struct hex_editor *h)
 {
+	mvwaddstr (h->win, 1,  1, "****|  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f");
 	mvwaddstr (h->win, 1, 56, "'m' - movement mode");
 	mvwaddstr (h->win, 2, 56, "'i' - insert mode");
 	mvwaddstr (h->win, 3, 56, "'q' - quit editor");
@@ -185,7 +186,7 @@ hex_editor_draw (struct hex_editor *h)
 	}
 
 	uint16_t px = h->lbytes + h->half_byte_pos + h->cursorx * 3 + 1;
-	uint16_t py = 1 + h->cursory;
+	uint16_t py = h->uoff + h->cursory;
 
 	print_info (h);
 

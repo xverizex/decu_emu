@@ -82,7 +82,7 @@ main (int argc, char **argv)
 			hex_editor_width_with_border,
 			hex_editor_height_with_border,
 			1,
-			1);
+			2);
 
 	hex_editor_draw (hex_editor);
 
