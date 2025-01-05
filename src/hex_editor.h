@@ -1,7 +1,7 @@
 #ifndef HEX_EDITOR_GAME_H
 #define HEX_EDITOR_GAME_H
 
-#include <ncurses/curses.h>
+#include <ncurses.h>
 #include <stdint.h>
 
 #define MAX_BYTES_HEX_EDITOR          65535

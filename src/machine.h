@@ -1,7 +1,8 @@
 #ifndef MACHINE_H
 #define MACHINE_H
 #include <stdint.h>
-#include <ncurses/curses.h>
+#include <ncurses.h>
+#include <time.h>
 #include "hex_editor.h"
 
 #define MAX_WINDOW_GAME_WIDTH              20

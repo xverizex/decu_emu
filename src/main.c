@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <locale.h>
-#include <ncurses/curses.h>
+#include <ncurses.h>
 #include <pthread.h>
 #include "hex_editor.h"
 #include "machine.h"
