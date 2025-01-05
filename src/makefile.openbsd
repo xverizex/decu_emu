@@ -1,0 +1,10 @@
+all:
+	egcc main.c hex_editor.c machine.c -pthread -lncurses -o decu_emu
+install:
+	mkdir -p /usr/local/share/man/man6
+	cp decu_emu.6x decu_emu.6
+	install decu_emu /usr/local/bin
+	install decu_emu.6 /usr/local/share/man/man6
+clean:
+	rm -f decu_emu
+	rm -f decu_emu.6
