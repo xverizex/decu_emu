@@ -149,8 +149,8 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 
 	int n;
 	for (int x = 0; x < 16; x++) {
-		sprintf (bl, " %02x%n", h->bytes[h->top_line + index_line - 1][x], &n);
-		bl += n;
+		snprintf (bl, 4, " %02x", h->bytes[h->top_line + index_line - 1][x]);
+		bl += 3;
 	}
 
 	mvwaddstr (h->win, index_line, posx, buf_line);
