@@ -149,7 +149,7 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 
 	int n;
 	for (int x = 0; x < 16; x++) {
-		snprintf (bl, 4, " %02x", h->bytes[h->top_line + index_line - 1][x]);
+		snprintf (bl, 4, " %02x", h->bytes[h->top_line + index_line - h->uoff][x]);
 		bl += 3;
 	}
 
