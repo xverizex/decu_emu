@@ -612,16 +612,9 @@ handle_jc (struct machine *m, uint8_t *b)
 	m->cpu.ip += 3;
 }
 
-void
-machine_run (struct machine *m)
+static void
+execute_instruction (struct machine *m, uint8_t opcode, uint8_t *b)
 {
-	uint8_t *b = &m->hex_editor->bytes[0][0];
-
-	uint8_t opcode = b[m->cpu.ip];
-
-	if (hex_editor->is_debug) {
-		debug_set_step (opcode, m->cpu.ip);
-	}
 
 	switch (opcode >> 4) {
 		case ADD:
@@ -670,10 +663,42 @@ machine_run (struct machine *m)
 			handle_jc (m, b);
 			break;
 		case HLT:
-			m->cpu.ip++;
+			m->cpu.ip++; 
 			m->is_run = 0;
+			hex_editor->is_debug = 0;
+			hex_editor->is_simulate = 0;
+			mvwaddstr (hex_editor->win, 0, 16, " mode: movement ------");
+			wrefresh (hex_editor->win);
 			break;
 	}
+}
+
+void
+machine_step_instruction (struct machine *m)
+{
+	uint8_t *b = &m->hex_editor->bytes[0][0];
+
+	uint8_t opcode = b[m->cpu.ip];
+
+	execute_instruction (m, opcode, b);
+}
+
+void
+machine_run (struct machine *m)
+{
+	uint8_t *b = &m->hex_editor->bytes[0][0];
+
+	uint8_t opcode = b[m->cpu.ip];
+
+	if (hex_editor->is_debug) {
+		debug_set_step (opcode, m->cpu.ip);
+		hex_editor_draw (hex_editor);
+		int c = wgetch (hex_editor->win);
+		debug_input (c);
+	} else {
+		execute_instruction (m, opcode, b);
+	}
+
 
 	if (hex_editor->is_debug) {
 		hex_editor->is_simulate = 0;

@@ -79,5 +79,6 @@ struct machine {
 struct machine *machine_init (WINDOW *screen_win);
 void machine_run (struct machine *m);
 void machine_input (struct machine *m, int c);
+void machine_step_instruction (struct machine *m);
 
 #endif

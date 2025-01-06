@@ -24,6 +24,7 @@ game_create_window (int w, int h, int x, int y)
 	return win;
 }
 
+#if 0
 static void *
 handle_input (void *_data)
 {
@@ -45,6 +46,7 @@ handle_input (void *_data)
 		}
 	}
 }
+#endif
 
 int 
 main (int argc, char **argv)
@@ -127,12 +129,15 @@ main (int argc, char **argv)
 	machine = machine_init (screen_win);
 	machine->hex_editor = hex_editor;
 
+#if 0
 	pthread_t p_handle_input;
 	pthread_create (&p_handle_input, NULL, handle_input, hex_editor_win);
+#endif
 
 	struct timespec editor = {0, 400 * 1000};
 
 	mvwaddstr (hex_editor_win, 0, 1, "hex editor");
+	mvwaddstr (hex_editor_win, 0, 16, " mode: movement ------");
 	wrefresh (hex_editor_win);
 
 	mvwaddstr (screen_win, 0, 1, "screen");
@@ -143,10 +148,17 @@ main (int argc, char **argv)
 			break;
 
 
-		if (hex_editor->is_simulate == 0) {
+		if (hex_editor->is_simulate == 0 && !hex_editor->is_debug) {
 			hex_editor_draw (hex_editor);
-			nanosleep (&editor, NULL);
+			int c = wgetch (hex_editor->win);
+			hex_editor_input (hex_editor, c);
+			continue;
 		} else {
+			if (hex_editor->is_debug) {
+				machine_run (machine);
+				nanosleep (&machine->timer, NULL);
+				continue;
+			}
 			if (machine->is_run == 0) {
 				if (!hex_editor->is_debug) {
 					wclear (screen_win);
@@ -169,8 +181,6 @@ main (int argc, char **argv)
 			}
 			nanosleep (&machine->timer, NULL);
 		}
-
-
 	}
 
 

@@ -202,13 +202,12 @@ print_info (struct hex_editor *h)
 	mvwaddstr (h->win, 1,  1, "****|  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f");
 	mvwaddstr (h->win, 1, 56, "'m' - movement mode");
 	mvwaddstr (h->win, 2, 56, "'i' - insert mode");
-	mvwaddstr (h->win, 3, 56, "'q' - quit editor");
-	mvwaddstr (h->win, 4, 56, "'q' - quit from game");
-	mvwaddstr (h->win, 5, 56, "'r' - run simulate");
-	mvwaddstr (h->win, 6, 56, "'w' - save to file");
-	mvwaddstr (h->win, 7, 56, "'hjkl' - vim movement");
-	mvwaddstr (h->win, 8, 56, "'d' - run in debug");
-	mvwaddstr (h->win, 9, 56, "'space' - step debug");
+	mvwaddstr (h->win, 3, 56, "'q' - quit mode");
+	mvwaddstr (h->win, 4, 56, "'r' - run simulate");
+	mvwaddstr (h->win, 5, 56, "'w' - save to file");
+	mvwaddstr (h->win, 6, 56, "'hjkl' - vim movement");
+	mvwaddstr (h->win, 7, 56, "'d' - run in debug");
+	mvwaddstr (h->win, 8, 56, "'space' - step debug");
 }
 
 void 
@@ -256,18 +255,26 @@ hex_editor_input (struct hex_editor *h, int c)
 		case 'm':
 			h->cur_handle_input = hex_editor_movement;
 			h->half_byte_pos = 0;
+			mvwaddstr (h->win, 0, 16, " mode: movement ------");
+			wrefresh (h->win);
 			break;
 		case 'i':
 			h->cur_handle_input = hex_editor_insert;
+			mvwaddstr (h->win, 0, 16, " mode: inserting ------");
+			wrefresh (h->win);
 			h->half_byte_pos = 0;
 			break;
 		case 'w':
 			write_buffer (h);
 			break;
 		case 'r':
+			mvwaddstr (h->win, 0, 16, " mode: simulation ------");
+			wrefresh (h->win);
 			h->is_simulate = 1;
 			break;
 		case 'd':
+			mvwaddstr (h->win, 0, 16, " mode: debug ------");
+			wrefresh (h->win);
 			h->is_debug = 1;
 			h->is_simulate = 1;
 			break;

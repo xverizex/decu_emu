@@ -16,13 +16,20 @@ is_debug_on_line (uint16_t line, uint8_t *posx, uint8_t *count)
 	if (line >= start && line <= end) {
 		if (start != end) {
 			uint16_t d_count = 0;
-			if (line == start) {
-				d_count = (16 * (line + 1)) - debugger.offset;
-				debugger.nl_count = debugger.count - d_count;
-				*posx = debugger.offset;
-			} else if (line == end) {
-				d_count = debugger.nl_count;
-				*posx = 0;
+			uint8_t px = debugger.offset % 16;
+
+			if (px == 0xf && debugger.count == 1 && line == start) {
+				*posx = px;
+				d_count = 1;
+			} else if (debugger.count > 1) {
+				if (line == start) {
+					d_count = (16 * (line + 1)) - debugger.offset;
+					debugger.nl_count = debugger.count - d_count;
+					*posx = debugger.offset;
+				} else if (line == end) {
+					d_count = debugger.nl_count;
+					*posx = 0;
+				}
 			}
 
 			*count = d_count;
@@ -84,8 +91,17 @@ void
 debug_input (int c)
 {
 	switch (c) {
+		case 'q':
+			hex_editor->is_debug = 0;
+			hex_editor->is_simulate = 0;
+			machine->is_run = 0;
+			machine->cpu.ip = 0;
+			mvwaddstr (hex_editor->win, 0, 16, " mode: editor ------");
+			wrefresh (hex_editor->win);
+			break;
 		case ' ':
 			hex_editor->is_simulate = 1;
+			machine_step_instruction (machine);
 			break;
 	}
 }
