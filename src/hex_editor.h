@@ -29,6 +29,7 @@ struct hex_editor {
 	uint8_t is_quit;
 	uint16_t px;
 	uint16_t py;
+	uint32_t mode;
 };
 
 struct hex_editor *hex_editor_create (
@@ -38,6 +39,14 @@ struct hex_editor *hex_editor_create (
 		uint32_t height, 
 		uint16_t lpos, 
 		uint16_t upos);
+
+enum {
+	MODE_MOVEMENT,
+	MODE_EDITING,
+	MODE_DEBUGGING,
+	MODE_SIMULATION,
+	N_MODE
+};
 
 void hex_editor_draw (struct hex_editor *self);
 uint32_t hex_editor_input (struct hex_editor *h, int c);

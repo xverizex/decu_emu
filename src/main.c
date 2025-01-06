@@ -24,30 +24,6 @@ game_create_window (int w, int h, int x, int y)
 	return win;
 }
 
-#if 0
-static void *
-handle_input (void *_data)
-{
-	WINDOW *win = _data;
-	while (1) {
-		int c = wgetch (win);
-
-		if (hex_editor->is_debug) {
-			debug_input (c);
-		}
-
-		if (!hex_editor->is_simulate) {
-			hex_editor_input (hex_editor, c);
-			if (hex_editor->is_quit) {
-				return NULL;
-			}
-		} else {
-			machine_input (machine, c);
-		}
-	}
-}
-#endif
-
 int 
 main (int argc, char **argv)
 {
@@ -101,6 +77,8 @@ main (int argc, char **argv)
 
 	wrefresh (cpu_win);
 
+	debug_set_windows (cpu_win, memory_stack_win);
+
 	screen_win = game_create_window (
 			real_window_width_game, 
 			real_window_height_game, 
@@ -128,11 +106,6 @@ main (int argc, char **argv)
 
 	machine = machine_init (screen_win);
 	machine->hex_editor = hex_editor;
-
-#if 0
-	pthread_t p_handle_input;
-	pthread_create (&p_handle_input, NULL, handle_input, hex_editor_win);
-#endif
 
 	struct timespec editor = {0, 400 * 1000};
 

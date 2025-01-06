@@ -134,6 +134,7 @@ hex_editor_create (
 	editor->is_simulate = 0;
 	editor->is_quit = 0;
 	editor->is_debug = 0;
+	editor->mode = MODE_MOVEMENT;
 
 	editor->dump = fopen (filename, "r");
 	fread (editor->bytes, 1, 0xffff, editor->dump);
@@ -253,12 +254,14 @@ hex_editor_input (struct hex_editor *h, int c)
 
 	switch (c) {
 		case 'm':
+			h->mode = MODE_MOVEMENT;
 			h->cur_handle_input = hex_editor_movement;
 			h->half_byte_pos = 0;
 			mvwaddstr (h->win, 0, 16, " mode: movement ------");
 			wrefresh (h->win);
 			break;
 		case 'i':
+			h->mode = MODE_EDITING;
 			h->cur_handle_input = hex_editor_insert;
 			mvwaddstr (h->win, 0, 16, " mode: inserting ------");
 			wrefresh (h->win);
@@ -268,15 +271,20 @@ hex_editor_input (struct hex_editor *h, int c)
 			write_buffer (h);
 			break;
 		case 'r':
+			h->mode = MODE_SIMULATION;
 			mvwaddstr (h->win, 0, 16, " mode: simulation ------");
 			wrefresh (h->win);
 			h->is_simulate = 1;
 			break;
 		case 'd':
-			mvwaddstr (h->win, 0, 16, " mode: debug ------");
-			wrefresh (h->win);
-			h->is_debug = 1;
-			h->is_simulate = 1;
+			if (h->mode != MODE_EDITING && h->mode != MODE_SIMULATION) {
+				mvwaddstr (h->win, 0, 16, " mode: debug ------");
+				wrefresh (h->win);
+				h->is_debug = 1;
+				h->is_simulate = 1;
+			} else if (h->mode == MODE_EDITING) {
+				return h->cur_handle_input (h, c);
+			}
 			break;
 		default:
 			return h->cur_handle_input (h, c);

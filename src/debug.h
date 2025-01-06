@@ -2,6 +2,7 @@
 #define DEBUG_H
 
 #include <stdint.h>
+#include <ncurses.h>
 
 #define COLOR_COMMON           1
 #define COLOR_STEP_DEBUG       2
@@ -14,10 +15,14 @@ struct debugger {
 	uint8_t lbyte;
 	uint8_t args;
 	uint8_t instruction;
+	WINDOW *stack;
+	WINDOW *cpu;
 };
 
 uint32_t is_debug_on_line (uint16_t line, uint8_t *posx, uint8_t *count);
 void debug_set_step (uint8_t opcode, uint16_t offset);
 void debug_input (int c);
+void debug_set_windows (WINDOW *cpu, WINDOW *stack);
+void debug_print_info ();
 
 #endif

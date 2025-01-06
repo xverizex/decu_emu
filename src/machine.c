@@ -53,6 +53,7 @@ machine_input (struct machine *m, int c)
 			break;
 		case 'q':
 			m->is_run = 0;
+			hex_editor->mode = MODE_MOVEMENT;
 			break;
 	}
 }
@@ -642,7 +643,14 @@ execute_instruction (struct machine *m, uint8_t opcode, uint8_t *b)
 			handle_ld (m, b);
 			break;
 		case IN:
-			handle_in (m, b);
+			{
+				uint8_t type = b[m->cpu.ip + 1];
+				if (type == ADDR_CROSS || type == ADDR_BUTTONS) {
+					int c = wgetch (hex_editor->win);
+					machine_input (m, c);
+				}
+				handle_in (m, b);
+			}
 			break;
 		case NOP:
 			m->cpu.ip++;
@@ -692,6 +700,8 @@ machine_run (struct machine *m)
 
 	if (hex_editor->is_debug) {
 		debug_set_step (opcode, m->cpu.ip);
+		debug_print_info ();
+		wmove (hex_editor->win, hex_editor->py, hex_editor->px);
 		hex_editor_draw (hex_editor);
 		int c = wgetch (hex_editor->win);
 		debug_input (c);

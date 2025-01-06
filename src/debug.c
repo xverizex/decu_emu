@@ -88,15 +88,23 @@ debug_set_step (uint8_t opcode, uint16_t offset)
 }
 
 void
+debug_set_windows (WINDOW *cpu, WINDOW *stack)
+{
+	debugger.cpu = cpu;
+	debugger.stack = stack;
+}
+
+void
 debug_input (int c)
 {
 	switch (c) {
 		case 'q':
+			hex_editor->mode = MODE_MOVEMENT;
 			hex_editor->is_debug = 0;
 			hex_editor->is_simulate = 0;
 			machine->is_run = 0;
 			machine->cpu.ip = 0;
-			mvwaddstr (hex_editor->win, 0, 16, " mode: editor ------");
+			mvwaddstr (hex_editor->win, 0, 16, " mode: movement ------");
 			wrefresh (hex_editor->win);
 			break;
 		case ' ':
@@ -104,4 +112,23 @@ debug_input (int c)
 			machine_step_instruction (machine);
 			break;
 	}
+}
+
+void
+debug_print_info ()
+{
+	char line[64];
+	snprintf (line, 64, "FLAGS: %04x", machine->cpu.flags);
+	mvwaddstr (debugger.cpu, 1, 2, line);
+	snprintf (line, 64, "   IP: %04x", machine->cpu.ip);
+	mvwaddstr (debugger.cpu, 2, 2, line);
+	snprintf (line, 64, "    A: %02x", machine->cpu.a);
+	mvwaddstr (debugger.cpu, 3, 2, line);
+	snprintf (line, 64, "    X: %02x", machine->cpu.x);
+	mvwaddstr (debugger.cpu, 4, 2, line);
+	snprintf (line, 64, "    Y: %02x", machine->cpu.y);
+	mvwaddstr (debugger.cpu, 5, 2, line);
+	snprintf (line, 64, "    S: %04x", machine->cpu.s);
+	mvwaddstr (debugger.cpu, 6, 2, line);
+	wrefresh (debugger.cpu);
 }
