@@ -159,6 +159,8 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 	for (int x = 0; x < 16; x++) {
 		if (is_colored && is_step && count && posx_debug <= x) {
 			wattron (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
+		} else if (!is_colored && is_step && count && posx_debug <= x) {
+			wattron (h->win, A_BOLD);
 		}
 
 		snprintf (buf_line, 2, " ");
@@ -180,6 +182,13 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 			posx_debug++;
 			if (count == 0) {
 				wattroff (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
+				is_step = 0;
+			}
+		} else if (!is_colored && is_step && posx_debug <= x && count) {
+			count--;
+			posx_debug++;
+			if (count == 0) {
+				wattroff (h->win, A_BOLD);
 				is_step = 0;
 			}
 		}
