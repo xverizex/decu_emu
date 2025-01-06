@@ -77,7 +77,7 @@ main (int argc, char **argv)
 	cpu_win = game_create_window (
 			28,
 			12,
-			52,
+			width_term - 28,
 			0);
 
 	mvwaddstr (cpu_win, 0, 1, "cpu");
