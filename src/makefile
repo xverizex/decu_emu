@@ -1,6 +1,6 @@
 LIBS=`pkg-config ncurses --libs --cflags`
 all:
-	gcc main.c hex_editor.c machine.c -pthread -fsanitize=address -g $(LIBS) -o decu_emu
+	gcc main.c hex_editor.c machine.c debug.c -pthread -fsanitize=address -g $(LIBS) -o decu_emu
 install:
 	mkdir -p /usr/local/share/man/man6
 	gzip -c decu_emu.6x > decu_emu.6x.gz

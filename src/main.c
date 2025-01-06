@@ -8,10 +8,13 @@
 #include <pthread.h>
 #include "hex_editor.h"
 #include "machine.h"
+#include "debug.h"
 #include <time.h>
 
 static struct hex_editor *hex_editor;
 static struct machine *machine;
+
+uint32_t is_colored;
 
 static WINDOW *
 game_create_window (int w, int h, int x, int y)
@@ -52,6 +55,14 @@ main (int argc, char **argv)
 	keypad (stdscr, TRUE);
 	cbreak ();
 	noecho ();
+
+	is_colored = has_colors ();
+
+	if (is_colored) {
+		start_color ();
+		init_pair (COLOR_COMMON, COLOR_WHITE, COLOR_BLACK);
+		init_pair (COLOR_STEP_DEBUG, COLOR_WHITE, COLOR_YELLOW);
+	}
 
 	WINDOW *screen_win;
 	WINDOW *hex_editor_win;

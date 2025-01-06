@@ -1,7 +1,10 @@
 #include "hex_editor.h"
+#include "debug.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+extern uint32_t is_colored;
 
 static uint32_t
 hex_editor_movement (struct hex_editor *h, int c)
@@ -144,16 +147,43 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 		uint16_t addr_off)
 {
 	uint16_t posx = h->lbytes;
-	char buf_line[512];
-	char *bl = buf_line;
+	char buf_line[4];
+
+	uint8_t posx_debug = 0;
+	uint8_t count = 0;
+	uint32_t is_step = is_debug_on_line (index_line - h->uoff, &posx_debug, &count);
 
 	int n;
-	for (int x = 0; x < 16; x++) {
-		snprintf (bl, 4, " %02x", h->bytes[h->top_line + index_line - h->uoff][x]);
-		bl += 3;
-	}
+	uint32_t first_condition = 1;
 
-	mvwaddstr (h->win, index_line, posx, buf_line);
+	for (int x = 0; x < 16; x++) {
+		if (is_colored && is_step && count && posx_debug <= x) {
+			wattron (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
+		}
+
+		snprintf (buf_line, 2, " ");
+		if (is_colored && is_step && count && posx_debug <= x && first_condition) {
+			first_condition = 0;
+			wattroff (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
+			mvwaddstr (h->win, index_line, posx, buf_line);
+			wattron (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
+		} else {
+			mvwaddstr (h->win, index_line, posx, buf_line);
+		}
+		posx++;
+		snprintf (buf_line, 3, "%02x", h->bytes[h->top_line + index_line - h->uoff][x]);
+		mvwaddstr (h->win, index_line, posx, buf_line);
+		posx += 2;
+
+		if (is_colored && is_step && posx_debug <= x && count) {
+			count--;
+			posx_debug++;
+			if (count == 0) {
+				wattroff (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
+				is_step = 0;
+			}
+		}
+	}
 }
 
 static void
