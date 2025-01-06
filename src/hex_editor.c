@@ -167,6 +167,8 @@ print_info (struct hex_editor *h)
 	mvwaddstr (h->win, 5, 56, "'r' - run simulate");
 	mvwaddstr (h->win, 6, 56, "'w' - save to file");
 	mvwaddstr (h->win, 7, 56, "'hjkl' - vim movement");
+	mvwaddstr (h->win, 8, 56, "'d' - run in debug");
+	mvwaddstr (h->win, 9, 56, "'space' - step debug");
 }
 
 void 
@@ -190,8 +192,10 @@ hex_editor_draw (struct hex_editor *h)
 
 	print_info (h);
 
-	wmove (h->win, py, px);
+	h->px = px;
+	h->py = py;
 
+	wmove (h->win, py, px);
 	wrefresh (h->win);
 }
 
@@ -222,6 +226,9 @@ hex_editor_input (struct hex_editor *h, int c)
 			break;
 		case 'r':
 			h->is_simulate = 1;
+			break;
+		case 'd':
+			h->is_debug = 1;
 			break;
 		default:
 			return h->cur_handle_input (h, c);

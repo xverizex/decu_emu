@@ -25,7 +25,10 @@ struct hex_editor {
 	uint8_t half_byte_pos;
 	const char *filename;
 	uint32_t is_simulate;
+	uint32_t is_debug;
 	uint8_t is_quit;
+	uint16_t px;
+	uint16_t py;
 };
 
 struct hex_editor *hex_editor_create (

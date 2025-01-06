@@ -55,12 +55,34 @@ main (int argc, char **argv)
 
 	WINDOW *screen_win;
 	WINDOW *hex_editor_win;
+	WINDOW *memory_stack_win;
+	WINDOW *cpu_win;
 
 	uint32_t width_term = COLS;
 	uint32_t height_term = LINES;
 
 	uint32_t real_window_width_game = MAX_WINDOW_GAME_WIDTH + 4;
 	uint32_t real_window_height_game = MAX_WINDOW_GAME_HEIGHT + 2;
+
+	memory_stack_win = game_create_window (
+			28,
+			12,
+			0,
+			0);
+
+	mvwaddstr (memory_stack_win, 0, 1, "stack");
+
+	wrefresh (memory_stack_win);
+
+	cpu_win = game_create_window (
+			28,
+			12,
+			52,
+			0);
+
+	mvwaddstr (cpu_win, 0, 1, "cpu");
+
+	wrefresh (cpu_win);
 
 	screen_win = game_create_window (
 			real_window_width_game, 
@@ -75,6 +97,7 @@ main (int argc, char **argv)
 			hex_editor_height_with_border, 
 			0, 
 			real_window_height_game);
+
 
 	wrefresh (screen_win);
 
@@ -94,6 +117,12 @@ main (int argc, char **argv)
 
 	struct timespec editor = {0, 400 * 1000};
 
+	mvwaddstr (hex_editor_win, 0, 1, "hex editor");
+	wrefresh (hex_editor_win);
+
+	mvwaddstr (screen_win, 0, 1, "screen");
+	wrefresh (screen_win);
+
 	while (1) {
 		if (hex_editor->is_quit)
 			break;
@@ -105,6 +134,7 @@ main (int argc, char **argv)
 			if (machine->is_run == 0) {
 				wclear (screen_win);
 				box (screen_win, '|', '-');
+				mvwaddstr (screen_win, 0, 1, "screen");
 				wrefresh (screen_win);
 				machine->is_run = 1;
 				machine->cpu.ip = 0x0;
@@ -117,6 +147,7 @@ main (int argc, char **argv)
 			}
 			nanosleep (&machine->timer, NULL);
 		}
+
 
 	}
 
