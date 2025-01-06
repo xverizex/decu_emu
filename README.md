@@ -4,5 +4,5 @@ An emulation of a fictional computer where you need to write code using machine 
 
 ![Imgur](https://i.imgur.com/fgj3Shf.png)
 
-### Mode debug
+### debug highlight
 ![Imgur](https://i.imgur.com/9wEfqIb.png)

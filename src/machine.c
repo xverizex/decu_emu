@@ -1,7 +1,10 @@
 #include "machine.h"
+#include "debug.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+extern struct hex_editor *hex_editor;
 
 struct machine *
 machine_init (WINDOW *game_screen)
@@ -606,10 +609,7 @@ handle_jc (struct machine *m, uint8_t *b)
 		return;
 	}
 
-	if (reg0 == REG_ADDR)
-		m->cpu.ip += 2;
-	else 
-		m->cpu.ip++;
+	m->cpu.ip += 3;
 }
 
 void
@@ -617,9 +617,13 @@ machine_run (struct machine *m)
 {
 	uint8_t *b = &m->hex_editor->bytes[0][0];
 
-	uint8_t opcode = b[m->cpu.ip] >> 4;
+	uint8_t opcode = b[m->cpu.ip];
 
-	switch (opcode) {
+	if (hex_editor->is_debug) {
+		debug_set_step (opcode, m->cpu.ip);
+	}
+
+	switch (opcode >> 4) {
 		case ADD:
 			handle_add (m, b);
 			break;
@@ -671,4 +675,8 @@ machine_run (struct machine *m)
 			break;
 	}
 
+	if (hex_editor->is_debug) {
+		hex_editor->is_simulate = 0;
+		m->is_run = 0;
+	}
 }

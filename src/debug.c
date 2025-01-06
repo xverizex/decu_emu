@@ -1,7 +1,11 @@
 #include "debug.h"
+#include "machine.h"
+#include <stdlib.h>
 #include <ncurses.h>
 
-struct debugger debugger = {14, 4};
+static struct debugger debugger;
+extern struct machine *machine;
+extern struct hex_editor *hex_editor;
 
 uint32_t
 is_debug_on_line (uint16_t line, uint8_t *posx, uint8_t *count)
@@ -11,16 +15,77 @@ is_debug_on_line (uint16_t line, uint8_t *posx, uint8_t *count)
 
 	if (line >= start && line <= end) {
 		if (start != end) {
-			uint16_t d_count = 16 - debugger.offset;
-			*posx = ((line == start)? debugger.offset: 0);
+			uint16_t d_count = 0;
+			if (line == start) {
+				d_count = (16 * (line + 1)) - debugger.offset;
+				debugger.nl_count = debugger.count - d_count;
+				*posx = debugger.offset;
+			} else if (line == end) {
+				d_count = debugger.nl_count;
+				*posx = 0;
+			}
 
 			*count = d_count;
 		} else {
-			*posx = debugger.offset;
+			*posx = debugger.offset % 16;
 			*count = debugger.count;
 		}
-		return 0; // THIS SHOULD BE TRUE; IT JUST TESTING FOR FUTURE.
+		return 1;
 	}
 
 	return 0;
+}
+
+void
+debug_set_step (uint8_t opcode, uint16_t offset)
+{
+	uint8_t instruction = opcode >> 4;
+	uint8_t args = opcode & 0x0f;
+	uint8_t hbyte = args >> 2;
+	uint8_t lbyte = args &  3;
+	/*
+	 * For tests
+	 */
+	debugger.hbyte = hbyte;
+	debugger.lbyte = lbyte;
+	debugger.args = args;
+	debugger.instruction = instruction;
+
+	if (instruction == HLT || instruction == NOP) {
+		debugger.offset = offset;
+		debugger.count = 1;
+		return;
+	}
+	if (instruction == JC) {
+		debugger.offset = offset;
+		debugger.count = 3;
+		return;
+	}
+
+
+	if (args == 0xf) {
+		debugger.offset = offset;
+		debugger.count = 3;
+		return;
+	}
+
+	if (hbyte == 0x3 || lbyte == 0x3) {
+		debugger.offset = offset;
+		debugger.count = 2;
+		return;
+	}
+
+	debugger.offset = offset;
+	debugger.count = 2;
+	return;
+}
+
+void
+debug_input (int c)
+{
+	switch (c) {
+		case ' ':
+			hex_editor->is_simulate = 1;
+			break;
+	}
 }

@@ -133,6 +133,7 @@ hex_editor_create (
 	editor->half_byte_pos = 0;
 	editor->is_simulate = 0;
 	editor->is_quit = 0;
+	editor->is_debug = 0;
 
 	editor->dump = fopen (filename, "r");
 	fread (editor->bytes, 1, 0xffff, editor->dump);
@@ -151,7 +152,7 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 
 	uint8_t posx_debug = 0;
 	uint8_t count = 0;
-	uint32_t is_step = is_debug_on_line (index_line - h->uoff, &posx_debug, &count);
+	uint32_t is_step = h->is_debug? is_debug_on_line (index_line - h->uoff, &posx_debug, &count): 0;
 
 	int n;
 	uint32_t first_condition = 1;
@@ -268,6 +269,7 @@ hex_editor_input (struct hex_editor *h, int c)
 			break;
 		case 'd':
 			h->is_debug = 1;
+			h->is_simulate = 1;
 			break;
 		default:
 			return h->cur_handle_input (h, c);

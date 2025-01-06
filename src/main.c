@@ -11,8 +11,8 @@
 #include "debug.h"
 #include <time.h>
 
-static struct hex_editor *hex_editor;
-static struct machine *machine;
+struct hex_editor *hex_editor;
+struct machine *machine;
 
 uint32_t is_colored;
 
@@ -30,6 +30,10 @@ handle_input (void *_data)
 	WINDOW *win = _data;
 	while (1) {
 		int c = wgetch (win);
+
+		if (hex_editor->is_debug) {
+			debug_input (c);
+		}
 
 		if (!hex_editor->is_simulate) {
 			hex_editor_input (hex_editor, c);
@@ -138,23 +142,30 @@ main (int argc, char **argv)
 		if (hex_editor->is_quit)
 			break;
 
+
 		if (hex_editor->is_simulate == 0) {
 			hex_editor_draw (hex_editor);
 			nanosleep (&editor, NULL);
 		} else {
 			if (machine->is_run == 0) {
-				wclear (screen_win);
-				box (screen_win, '|', '-');
-				mvwaddstr (screen_win, 0, 1, "screen");
-				wrefresh (screen_win);
-				machine->is_run = 1;
-				machine->cpu.ip = 0x0;
-				hex_editor->is_simulate = 1;
+				if (!hex_editor->is_debug) {
+					wclear (screen_win);
+					box (screen_win, '|', '-');
+					mvwaddstr (screen_win, 0, 1, "screen");
+					wrefresh (screen_win);
+					machine->is_run = 1;
+					if (!hex_editor->is_debug) {
+						machine->cpu.ip = 0x0;
+					}
+					hex_editor->is_simulate = 1;
+				}
 			}
 			machine_run (machine);
 			if (machine->is_run == 0) {
 				hex_editor->is_simulate = 0;
-				machine->cpu.ip = 0x0;
+				if (!hex_editor->is_debug) {
+					machine->cpu.ip = 0x0;
+				}
 			}
 			nanosleep (&machine->timer, NULL);
 		}
