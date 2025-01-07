@@ -183,7 +183,6 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 		posx++;
 		uint16_t offset = h->top_line + ((index_line - h->uoff) * 16) + x;
 		snprintf (buf_line, 3, "%02x", b[offset]);
-		//snprintf (buf_line, 3, "%02x", h->bytes[h->top_line + index_line - h->uoff][x]);
 		mvwaddstr (h->win, index_line, posx, buf_line);
 		posx += 2;
 

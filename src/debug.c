@@ -13,6 +13,9 @@ is_debug_on_line (uint16_t line, uint8_t *posx, uint8_t *count)
 	uint16_t start = debugger.offset / 16;
 	uint16_t end = (debugger.offset + debugger.count) / 16;
 
+	/*
+	 * BUG: implement correct highlight opcode by y line
+	 */
 	if (line >= start && line <= end) {
 		if (start != end) {
 			uint16_t d_count = 0;
