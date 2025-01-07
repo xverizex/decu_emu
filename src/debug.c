@@ -14,7 +14,6 @@ is_debug_on_line (uint16_t line, uint8_t *posx, uint8_t *count)
 	uint16_t end = (debugger.offset + debugger.count) / 16;
 
 	uint16_t off = 16;
-	/* line * 16 / 16 */
 	line = (hex_editor->top_line + line * off);
 	line /= off;
 	if (line >= start && line <= end) {
