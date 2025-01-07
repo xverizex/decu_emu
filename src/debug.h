@@ -7,6 +7,9 @@
 #define COLOR_COMMON           1
 #define COLOR_STEP_DEBUG       2
 
+#define DEBUG_WINDOW_WIDTH    28
+#define DEBUG_WINDOW_HEIGHT   12
+
 struct debugger {
 	uint16_t offset;
 	uint8_t count;

@@ -58,8 +58,8 @@ main (int argc, char **argv)
 	uint32_t real_window_height_game = MAX_WINDOW_GAME_HEIGHT + 2;
 
 	memory_stack_win = game_create_window (
-			28,
-			12,
+			DEBUG_WINDOW_WIDTH,
+			DEBUG_WINDOW_HEIGHT,
 			0,
 			0);
 
@@ -68,9 +68,9 @@ main (int argc, char **argv)
 	wrefresh (memory_stack_win);
 
 	cpu_win = game_create_window (
-			28,
-			12,
-			width_term - 28,
+			DEBUG_WINDOW_WIDTH, 
+			DEBUG_WINDOW_HEIGHT, 
+			width_term - DEBUG_WINDOW_WIDTH,
 			0);
 
 	mvwaddstr (cpu_win, 0, 1, "cpu");
