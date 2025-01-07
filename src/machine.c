@@ -79,9 +79,6 @@ get_print_screen (struct machine *m, uint8_t *b)
 static void
 print_screen (struct machine *m, uint8_t *b)
 {
-	char sym[2];
-	snprintf (sym, 2, "%c", m->cpu.a);
-
 	if (m->cpu.x > MAX_WINDOW_GAME_WIDTH) {
 		m->cpu.x = MAX_WINDOW_GAME_WIDTH + 1;
 	}
@@ -89,7 +86,7 @@ print_screen (struct machine *m, uint8_t *b)
 		m->cpu.y = MAX_WINDOW_GAME_HEIGHT - 1;
 	}
 
-	mvwaddstr (m->game_screen, m->cpu.y + 1, m->cpu.x + 1, sym);
+	mvwprintw (m->game_screen, m->cpu.y + 1, m->cpu.x + 1, "%c", m->cpu.a);
 	wrefresh (m->game_screen);
 
 	m->cpu.ip += 2;
@@ -675,7 +672,7 @@ execute_instruction (struct machine *m, uint8_t opcode, uint8_t *b)
 			m->is_run = 0;
 			hex_editor->is_debug = 0;
 			hex_editor->is_simulate = 0;
-			mvwaddstr (hex_editor->win, 0, 16, " mode: movement ------");
+			mvwprintw (hex_editor->win, 0, 16, " mode: movement ------");
 			wrefresh (hex_editor->win);
 			break;
 	}

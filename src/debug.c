@@ -114,7 +114,7 @@ debug_input (int c)
 			hex_editor->is_simulate = 0;
 			machine->is_run = 0;
 			machine->cpu.ip = 0;
-			mvwaddstr (hex_editor->win, 0, 16, " mode: movement ------");
+			mvwprintw (hex_editor->win, 0, 16, " mode: movement ------");
 			wrefresh (hex_editor->win);
 			break;
 		case ' ':
@@ -128,18 +128,12 @@ void
 debug_print_info ()
 {
 	char line[64];
-	snprintf (line, 64, "FLAGS: %04x", machine->cpu.flags);
-	mvwaddstr (debugger.cpu, 1, 2, line);
-	snprintf (line, 64, "   IP: %04x", machine->cpu.ip);
-	mvwaddstr (debugger.cpu, 2, 2, line);
-	snprintf (line, 64, "    A: %02x", machine->cpu.a);
-	mvwaddstr (debugger.cpu, 3, 2, line);
-	snprintf (line, 64, "    X: %02x", machine->cpu.x);
-	mvwaddstr (debugger.cpu, 4, 2, line);
-	snprintf (line, 64, "    Y: %02x", machine->cpu.y);
-	mvwaddstr (debugger.cpu, 5, 2, line);
-	snprintf (line, 64, "    S: %04x", machine->cpu.s);
-	mvwaddstr (debugger.cpu, 6, 2, line);
+	mvwprintw (debugger.cpu, 1, 2, "FLAGS: %04x", machine->cpu.flags);
+	mvwprintw (debugger.cpu, 2, 2, "   IP: %04x", machine->cpu.ip);
+	mvwprintw (debugger.cpu, 3, 2, "    A: %02x", machine->cpu.a);
+	mvwprintw (debugger.cpu, 4, 2, "    X: %02x", machine->cpu.x);
+	mvwprintw (debugger.cpu, 5, 2, "    Y: %02x", machine->cpu.y);
+	mvwprintw (debugger.cpu, 6, 2, "    S: %04x", machine->cpu.s);
 	wrefresh (debugger.cpu);
 
 	int y_height = 1;
@@ -158,8 +152,7 @@ debug_print_info ()
 	for (int y = 0; y < DEBUG_WINDOW_HEIGHT - 2; y++) {
 
 		uint16_t byte = b[stack];
-		snprintf (line, 64, "%04x: %02x", stack, byte);
-		mvwaddstr (debugger.stack, y_height, 1, line);
+		mvwprintw (debugger.stack, y_height, 1, "%04x: %02x", stack, byte);
 		y_height++;
 		stack--;
 	}

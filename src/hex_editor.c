@@ -171,19 +171,17 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 			wattron (h->win, A_BOLD);
 		}
 
-		snprintf (buf_line, 2, " ");
 		if (is_colored && is_step && count && posx_debug <= x && first_condition) {
 			first_condition = 0;
 			wattroff (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
-			mvwaddstr (h->win, index_line, posx, buf_line);
+			mvwprintw (h->win, index_line, posx, " ");
 			wattron (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
 		} else {
-			mvwaddstr (h->win, index_line, posx, buf_line);
+			mvwprintw (h->win, index_line, posx, " ");
 		}
 		posx++;
 		uint16_t offset = h->top_line + ((index_line - h->uoff) * 16) + x;
-		snprintf (buf_line, 3, "%02x", b[offset]);
-		mvwaddstr (h->win, index_line, posx, buf_line);
+		mvwprintw (h->win, index_line, posx, "%02x", b[offset]);
 		posx += 2;
 
 		if (is_colored && is_step && posx_debug <= x && count) {
@@ -207,15 +205,15 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 static void
 print_info (struct hex_editor *h)
 {
-	mvwaddstr (h->win, 1,  1, "****|  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f");
-	mvwaddstr (h->win, 1, 56, "'m' - movement mode");
-	mvwaddstr (h->win, 2, 56, "'i' - insert mode");
-	mvwaddstr (h->win, 3, 56, "'q' - quit mode");
-	mvwaddstr (h->win, 4, 56, "'r' - run simulate");
-	mvwaddstr (h->win, 5, 56, "'w' - save to file");
-	mvwaddstr (h->win, 6, 56, "'hjkl' - vim movement");
-	mvwaddstr (h->win, 7, 56, "'d' - run in debug");
-	mvwaddstr (h->win, 8, 56, "'space' - step debug");
+	mvwprintw (h->win, 1,  1, "****|  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f");
+	mvwprintw (h->win, 1, 56, "'m' - movement mode");
+	mvwprintw (h->win, 2, 56, "'i' - insert mode");
+	mvwprintw (h->win, 3, 56, "'q' - quit mode");
+	mvwprintw (h->win, 4, 56, "'r' - run simulate");
+	mvwprintw (h->win, 5, 56, "'w' - save to file");
+	mvwprintw (h->win, 6, 56, "'hjkl' - vim movement");
+	mvwprintw (h->win, 7, 56, "'d' - run in debug");
+	mvwprintw (h->win, 8, 56, "'space' - step debug");
 }
 
 void 
@@ -226,9 +224,7 @@ hex_editor_draw (struct hex_editor *h)
 
 	uint16_t index_line = h->uoff;
 	while (index_line < h->height) {
-		char str_number_line[32];
-		snprintf (str_number_line, 32, "%04x:", addr_off);
-		mvwaddstr (h->win, index_line, h->loff, str_number_line);
+		mvwprintw (h->win, index_line, h->loff, "%04x:", addr_off);
 		hex_editor_draw_line_bytes (h, index_line, addr_off);
 		addr_off += LENGTH_OF_BYTES_PER_LINE;
 		index_line++;
@@ -272,13 +268,13 @@ hex_editor_input (struct hex_editor *h, int c)
 			h->mode = MODE_MOVEMENT;
 			h->cur_handle_input = hex_editor_movement;
 			h->half_byte_pos = 0;
-			mvwaddstr (h->win, 0, 16, " mode: movement ------");
+			mvwprintw (h->win, 0, 16, " mode: movement ------");
 			wrefresh (h->win);
 			break;
 		case 'i':
 			h->mode = MODE_EDITING;
 			h->cur_handle_input = hex_editor_insert;
-			mvwaddstr (h->win, 0, 16, " mode: inserting ------");
+			mvwprintw (h->win, 0, 16, " mode: inserting ------");
 			wrefresh (h->win);
 			h->half_byte_pos = 0;
 			break;
@@ -287,13 +283,13 @@ hex_editor_input (struct hex_editor *h, int c)
 			break;
 		case 'r':
 			h->mode = MODE_SIMULATION;
-			mvwaddstr (h->win, 0, 16, " mode: simulation ------");
+			mvwprintw (h->win, 0, 16, " mode: simulation ------");
 			wrefresh (h->win);
 			h->is_simulate = 1;
 			break;
 		case 'd':
 			if (h->mode != MODE_EDITING && h->mode != MODE_SIMULATION) {
-				mvwaddstr (h->win, 0, 16, " mode: debug ------");
+				mvwprintw (h->win, 0, 16, " mode: debug ------");
 				wrefresh (h->win);
 				h->is_debug = 1;
 				h->is_simulate = 1;

@@ -63,7 +63,7 @@ main (int argc, char **argv)
 			0,
 			0);
 
-	mvwaddstr (memory_stack_win, 0, 1, "stack");
+	mvwprintw (memory_stack_win, 0, 1, "stack");
 
 	wrefresh (memory_stack_win);
 
@@ -73,7 +73,7 @@ main (int argc, char **argv)
 			width_term - DEBUG_WINDOW_WIDTH,
 			0);
 
-	mvwaddstr (cpu_win, 0, 1, "cpu");
+	mvwprintw (cpu_win, 0, 1, "cpu");
 
 	wrefresh (cpu_win);
 
@@ -111,11 +111,11 @@ main (int argc, char **argv)
 
 	struct timespec editor = {0, 400 * 1000};
 
-	mvwaddstr (hex_editor_win, 0, 1, "hex editor");
-	mvwaddstr (hex_editor_win, 0, 16, " mode: movement ------");
+	mvwprintw (hex_editor_win, 0, 1, "hex editor");
+	mvwprintw (hex_editor_win, 0, 16, " mode: movement ------");
 	wrefresh (hex_editor_win);
 
-	mvwaddstr (screen_win, 0, 1, "screen");
+	mvwprintw (screen_win, 0, 1, "screen");
 	wrefresh (screen_win);
 
 	while (1) {
@@ -138,7 +138,7 @@ main (int argc, char **argv)
 				if (!hex_editor->is_debug) {
 					wclear (screen_win);
 					box (screen_win, '|', '-');
-					mvwaddstr (screen_win, 0, 1, "screen");
+					mvwprintw (screen_win, 0, 1, "screen");
 					wrefresh (screen_win);
 					machine->is_run = 1;
 					if (!hex_editor->is_debug) {
