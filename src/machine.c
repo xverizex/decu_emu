@@ -110,6 +110,17 @@ get_timer (struct machine *m, uint8_t *b)
 }
 
 static void
+handle_hlt (struct machine *m, uint8_t *b)
+{
+	m->cpu.ip++; 
+	m->is_run = 0;
+	hex_editor->is_debug = 0;
+	hex_editor->is_simulate = 0;
+	mvwprintw (hex_editor->win, 0, 16, " mode: movement ------");
+	wrefresh (hex_editor->win);
+}
+
+static void
 handle_out (struct machine *m, uint8_t *b)
 {
 	switch (b[m->cpu.ip + 1]) {
@@ -156,6 +167,12 @@ get_buttons (struct machine *m, uint8_t *b)
 static void
 handle_in (struct machine *m, uint8_t *b)
 {
+	uint8_t type = b[m->cpu.ip + 1];
+	if (type == ADDR_CROSS || type == ADDR_BUTTONS) {
+		int c = wgetch (hex_editor->win);
+		machine_input (m, c);
+	}
+
 	switch (b[m->cpu.ip + 1]) {
 		case ADDR_TIMER:
 			get_timer (m, b);
@@ -610,6 +627,11 @@ handle_jc (struct machine *m, uint8_t *b)
 	m->cpu.ip += 3;
 }
 
+static void handle_nop (struct machine *m, uint8_t *b)
+{
+	m->cpu.ip++;
+}
+
 static void
 execute_instruction (struct machine *m, uint8_t opcode, uint8_t *b)
 {
@@ -640,17 +662,10 @@ execute_instruction (struct machine *m, uint8_t opcode, uint8_t *b)
 			handle_ld (m, b);
 			break;
 		case IN:
-			{
-				uint8_t type = b[m->cpu.ip + 1];
-				if (type == ADDR_CROSS || type == ADDR_BUTTONS) {
-					int c = wgetch (hex_editor->win);
-					machine_input (m, c);
-				}
-				handle_in (m, b);
-			}
+			handle_in (m, b);
 			break;
 		case NOP:
-			m->cpu.ip++;
+			handle_nop (m, b);
 			break;
 		case OUT:
 			handle_out (m, b);
@@ -668,12 +683,7 @@ execute_instruction (struct machine *m, uint8_t opcode, uint8_t *b)
 			handle_jc (m, b);
 			break;
 		case HLT:
-			m->cpu.ip++; 
-			m->is_run = 0;
-			hex_editor->is_debug = 0;
-			hex_editor->is_simulate = 0;
-			mvwprintw (hex_editor->win, 0, 16, " mode: movement ------");
-			wrefresh (hex_editor->win);
+			handle_hlt (m, b);
 			break;
 	}
 }
