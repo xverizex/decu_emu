@@ -635,8 +635,8 @@ static void handle_nop (struct machine *m, uint8_t *b)
 
 typedef void (*def_handler) (struct machine *m, uint8_t *b);
 
-#define BEGIN_STRUCT_HANDLER(name) \
-	def_handler name[N_OPERATORS] = {
+#define BEGIN_ARRAY_HANDLER(name) \
+	static def_handler name[N_OPERATORS] = {
 
 #define END_STRUCT_HANDLER() \
 	};
@@ -647,7 +647,7 @@ typedef void (*def_handler) (struct machine *m, uint8_t *b);
 #define HANDLER(opcode) \
 	handler[(opcode)] (m, b);
 
-BEGIN_STRUCT_HANDLER (handler)
+BEGIN_ARRAY_HANDLER (handler)
 	ADD_HANDLER (handle_add)
 	ADD_HANDLER (handle_sub)
 	ADD_HANDLER (handle_and)
