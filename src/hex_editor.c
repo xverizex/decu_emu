@@ -12,28 +12,32 @@ hex_editor_movement (struct hex_editor *h, int c)
 	switch (c) {
 		case 'l':
 			h->cursorx++;
-			if (h->cursorx >= 16) h->cursorx = 15;
+			if (h->cursorx >= 16) {
+				h->cursorx = 0;
+				goto key_j;
+			}
 			break;
 		case 'h':
 			h->cursorx--;
-			if (h->cursorx < 0) h->cursorx = 0;
+			if (h->cursorx < 0) {
+				h->cursorx = 15;
+				goto key_k;
+			}
 			break;
 		case 'j':
+key_j:
 			h->cursory++;
 			if (h->cursory >= (h->height - h->uoff)) {
 				h->cursory = h->height - h->uoff - 1;
-				if ((h->top_line + h->height) < 0xffff) {
-					h->top_line++;
-				}
+				h->top_line += 16;
 			}
 			break;
 		case 'k':
+key_k:
 			h->cursory--;
 			if (h->cursory < 0) {
 				h->cursory = 0;
-				if (h->top_line > 0) {
-					h->top_line--;
-				}
+				h->top_line -= 16;
 			}
 			break;
 		case 'q':
@@ -158,6 +162,8 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 	int n;
 	uint32_t first_condition = 1;
 
+	uint8_t *b = &h->bytes[0][0];
+
 	for (int x = 0; x < 16; x++) {
 		if (is_colored && is_step && count && posx_debug <= x) {
 			wattron (h->win, COLOR_PAIR (COLOR_STEP_DEBUG));
@@ -175,7 +181,9 @@ hex_editor_draw_line_bytes (struct hex_editor *h,
 			mvwaddstr (h->win, index_line, posx, buf_line);
 		}
 		posx++;
-		snprintf (buf_line, 3, "%02x", h->bytes[h->top_line + index_line - h->uoff][x]);
+		uint16_t offset = h->top_line + ((index_line - h->uoff) * 16) + x;
+		snprintf (buf_line, 3, "%02x", b[offset]);
+		//snprintf (buf_line, 3, "%02x", h->bytes[h->top_line + index_line - h->uoff][x]);
 		mvwaddstr (h->win, index_line, posx, buf_line);
 		posx += 2;
 
@@ -214,8 +222,8 @@ print_info (struct hex_editor *h)
 void 
 hex_editor_draw (struct hex_editor *h)
 {
-	uint16_t addr_off = h->top_line * LENGTH_OF_BYTES_PER_LINE;
-	uint16_t end_of_line = h->top_line + h->height - 1;
+	uint16_t addr_off = h->top_line;
+	uint16_t end_of_line = h->top_line + (h->height - 1) * 16;
 
 	uint16_t index_line = h->uoff;
 	while (index_line < h->height) {
@@ -253,6 +261,14 @@ hex_editor_input (struct hex_editor *h, int c)
 	uint16_t px, py;
 
 	switch (c) {
+		case KEY_NPAGE:
+			if (h->mode == MODE_MOVEMENT)
+				h->top_line += (h->height - h->uoff) * 16;
+			break;
+		case KEY_PPAGE:
+			if (h->mode == MODE_MOVEMENT)
+				h->top_line -= (h->height - h->uoff) * 16;
+			break;
 		case 'm':
 			h->mode = MODE_MOVEMENT;
 			h->cur_handle_input = hex_editor_movement;

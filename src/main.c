@@ -34,7 +34,7 @@ main (int argc, char **argv)
 
 	setlocale (LC_ALL, "");
 	initscr ();
-	keypad (stdscr, TRUE);
+	keypad (stdscr, FALSE);
 	cbreak ();
 	noecho ();
 
@@ -92,6 +92,8 @@ main (int argc, char **argv)
 			hex_editor_height_with_border, 
 			0, 
 			real_window_height_game);
+
+	keypad (hex_editor_win, TRUE);
 
 
 	wrefresh (screen_win);
