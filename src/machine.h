@@ -28,7 +28,8 @@ enum {
 	POP,
 	TEST,
 	JC,
-	HLT
+	HLT,
+	N_OPERATORS
 };
 
 enum {

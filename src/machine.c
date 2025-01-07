@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 
+
 extern struct hex_editor *hex_editor;
 
 struct machine *
@@ -632,60 +633,45 @@ static void handle_nop (struct machine *m, uint8_t *b)
 	m->cpu.ip++;
 }
 
+typedef void (*def_handler) (struct machine *m, uint8_t *b);
+
+#define BEGIN_STRUCT_HANDLER(name) \
+	def_handler name[N_OPERATORS] = {
+
+#define END_STRUCT_HANDLER() \
+	};
+
+#define ADD_HANDLER(name_function) \
+	name_function,
+
+#define HANDLER(opcode) \
+	handler[(opcode)] (m, b);
+
+BEGIN_STRUCT_HANDLER (handler)
+	ADD_HANDLER (handle_add)
+	ADD_HANDLER (handle_sub)
+	ADD_HANDLER (handle_and)
+	ADD_HANDLER (handle_or)
+	ADD_HANDLER (handle_xor)
+	ADD_HANDLER (handle_shl)
+	ADD_HANDLER (handle_shr)
+	ADD_HANDLER (handle_ld)
+	ADD_HANDLER (handle_in)
+	ADD_HANDLER (handle_nop)
+	ADD_HANDLER (handle_out)
+	ADD_HANDLER (handle_push)
+	ADD_HANDLER (handle_pop)
+	ADD_HANDLER (handle_test)
+	ADD_HANDLER (handle_jc)
+	ADD_HANDLER (handle_hlt)
+END_STRUCT_HANDLER ()
+
+
+
 static void
 execute_instruction (struct machine *m, uint8_t opcode, uint8_t *b)
 {
-
-	switch (opcode >> 4) {
-		case ADD:
-			handle_add (m, b);
-			break;
-		case SUB:
-			handle_sub (m, b);
-			break;
-		case AND:
-			handle_and (m, b);
-			break;
-		case OR:
-			handle_or (m, b);
-			break;
-		case XOR:
-			handle_xor (m, b);
-			break;
-		case SHL:
-			handle_shl (m, b);
-			break;
-		case SHR:
-			handle_shr (m, b);
-			break;
-		case LD:
-			handle_ld (m, b);
-			break;
-		case IN:
-			handle_in (m, b);
-			break;
-		case NOP:
-			handle_nop (m, b);
-			break;
-		case OUT:
-			handle_out (m, b);
-			break;
-		case PUSH:
-			handle_push (m, b);
-			break;
-		case POP:
-			handle_pop (m, b);
-			break;
-		case TEST:
-			handle_test (m, b);
-			break;
-		case JC:
-			handle_jc (m, b);
-			break;
-		case HLT:
-			handle_hlt (m, b);
-			break;
-	}
+	HANDLER (opcode >> 4);
 }
 
 void
