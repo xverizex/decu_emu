@@ -20,6 +20,7 @@ struct debugger {
 	uint8_t instruction;
 	WINDOW *stack;
 	WINDOW *cpu;
+	uint8_t top_stack_line;
 };
 
 uint32_t is_debug_on_line (uint16_t line, uint8_t *posx, uint8_t *count);

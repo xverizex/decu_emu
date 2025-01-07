@@ -82,6 +82,12 @@ debug_set_step (uint8_t opcode, uint16_t offset)
 		return;
 	}
 
+	if (instruction == PUSH || instruction == POP) {
+		debugger.offset = offset;
+		debugger.count = 1;
+		return;
+	}
+
 	debugger.offset = offset;
 	debugger.count = 2;
 	return;
@@ -131,4 +137,28 @@ debug_print_info ()
 	snprintf (line, 64, "    S: %04x", machine->cpu.s);
 	mvwaddstr (debugger.cpu, 6, 2, line);
 	wrefresh (debugger.cpu);
+
+	int y_height = 1;
+	uint8_t *b = &hex_editor->bytes[0][0];
+
+	uint16_t end_stack_line = machine->cpu.s;
+	uint16_t top_line = 0xffff;
+
+	uint16_t nline = (uint16_t) top_line - end_stack_line;
+	uint16_t stack = top_line;
+
+	if (nline >= ((DEBUG_WINDOW_HEIGHT - 2) / 2)) {
+		stack = end_stack_line + 5;
+	}
+
+	for (int y = 0; y < DEBUG_WINDOW_HEIGHT - 2; y++) {
+
+		uint16_t byte = b[stack];
+		snprintf (line, 64, "%04x: %02x", stack, byte);
+		mvwaddstr (debugger.stack, y_height, 1, line);
+		y_height++;
+		stack--;
+	}
+
+	wrefresh (debugger.stack);
 }
