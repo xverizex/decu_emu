@@ -85,7 +85,9 @@ hex_editor_insert (struct hex_editor *h, int c)
 	if (!is_hex_number (c))
 		return 1;
 
-	uint8_t *wr_byte = &h->bytes[h->cursory][h->cursorx];
+	uint8_t *b = &h->bytes[0][0];
+
+	uint8_t *wr_byte = &b[h->top_line + (h->cursory * 16) + h->cursorx];
 	if (h->half_byte_pos == 0) {
 		*wr_byte &= 0x0f;
 		*wr_byte |= (write_half_byte (h, c) << 4);
@@ -99,9 +101,7 @@ hex_editor_insert (struct hex_editor *h, int c)
 			h->cursory++;
 			if (h->cursory >= (h->height - 1)) {
 				h->cursory = h->height - 2;
-				if ((h->top_line + h->height) < 0xffff) {
-					h->top_line++;
-				}
+			h->top_line++;
 			}
 		} else {
 			h->cursorx++;
