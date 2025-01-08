@@ -1,10 +1,30 @@
-all:
-	egcc main.c hex_editor.c machine.c debug.c -pthread -lncurses -o decu_emu
+CC=egcc
+CFLAGS=
+LDFLAGS=-lncurses
+SOURCES=main.c hex_editor.c machine.c debug.c
+OBJECTS=$(SOURCES:.c=.o)
+EXECUTABLE=decu_emu
+MAN=decu_emu.6x
+STRIPPED_MAN=decu_emu.6
+MAN_PAGES_DIR=/usr/local/share/man/man6
+BIN_DIR=/usr/local/bin
+COUNT=4
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+
+.c.o:
+	@echo [CC] $<
+	@cc -c $< $(CFLAGS) -o $@
+
 install:
-	mkdir -p /usr/local/share/man/man6
-	cp decu_emu.6x decu_emu.6
-	install decu_emu /usr/local/bin
-	install decu_emu.6 /usr/local/share/man/man6
+	mkdir -p $(MAN_PAGES_DIR)
+	cp $(MAN) > $(STRIPPED_MAN)
+	nstall $(EXECUTABLE) $(BIN_DIR)
+	install $(STRIPPED_MAN) $(MAN_PAGES_DIR)
 clean:
-	rm -f decu_emu
-	rm -f decu_emu.6
+	rm -f *.o
+	rm -f $(EXECUTABLE)
+	rm -f $(STRIPPED_MAN)
