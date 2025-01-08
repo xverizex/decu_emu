@@ -54,6 +54,7 @@ machine_input (struct machine *m, int c)
 			break;
 		case 'q':
 			m->is_run = 0;
+			hex_editor->is_simulate = 0;
 			hex_editor->mode = MODE_MOVEMENT;
 			break;
 	}
