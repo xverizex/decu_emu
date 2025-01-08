@@ -117,6 +117,7 @@ handle_hlt (struct machine *m, uint8_t *b)
 	m->is_run = 0;
 	hex_editor->is_debug = 0;
 	hex_editor->is_simulate = 0;
+	hex_editor_input (hex_editor, 'm');
 	mvwprintw (hex_editor->win, 0, 16, " mode: movement ------");
 	wrefresh (hex_editor->win);
 }
